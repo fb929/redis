@@ -33,11 +33,10 @@ jobs:
         id: release-version
         run: |
           echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
-      - uses: engineerd/configurator@v0.0.9
-        with:
-          name: "${{ github.event.repository.name }}"
-          url: "http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz"
-          pathInArchive: "."
+      - name: download archive
+        runL: |
+          wget http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
+          tar -zxvf redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
 
 #      # create asset {{
 #      - name: create package deb
