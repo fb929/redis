@@ -40,7 +40,7 @@ jobs:
           wget http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
           tar -zxvf redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
       - name: run make
-        run: make
+        run: make BUILD_DIR=redis-${{ steps.release-version.outputs.RELEASE_VERSION }}
 
 #      # create asset {{
 #      - name: create package deb
