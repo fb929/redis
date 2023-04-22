@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
       - name: download archive
-        runL: |
+        run: |
           wget http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
           tar -zxvf redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
 
