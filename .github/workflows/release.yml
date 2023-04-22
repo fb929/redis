@@ -28,6 +28,18 @@ jobs:
     name: build release
     runs-on: ubuntu-latest
 #    needs: create_release
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          #- arm64
+        os:
+          - linux
+        include:
+          - arch: amd64
+            rpm_arch: x86_64
+          #- arch: arm64
+          #  rpm_arch: aarch64
     steps:
       - uses: actions/checkout@v3
       - name: get release version
@@ -40,20 +52,23 @@ jobs:
           wget http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
           tar -zxvf redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
       - name: run make
-        run: make BUILD_DIR=redis-${{ steps.release-version.outputs.RELEASE_VERSION }}
+        run: |
+          INSTALL_PREFIX_DIR=$(pwd)/result
+          cd redis-${{ steps.release-version.outputs.RELEASE_VERSION }} && make && make PREFIX=$INSTALL_PREFIX_DIR install
+          find $INSTALL_PREFIX_DIR
 
-#      # create asset {{
-#      - name: create package deb
-#        uses: bpicode/github-action-fpm@master
-#        with:
-#          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type deb --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir"
-#          fpm_args: "./bin"
-#      - name: create package rpm
-#        uses: bpicode/github-action-fpm@master
-#        with:
-#          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type rpm --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.rpm_arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir"
-#          fpm_args: "./bin"
-#      # }}
+      # create asset {{
+      - name: create package deb
+        uses: bpicode/github-action-fpm@master
+        with:
+          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type deb --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir"
+          fpm_args: "./result"
+      - name: create package rpm
+        uses: bpicode/github-action-fpm@master
+        with:
+          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type rpm --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.rpm_arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir"
+          fpm_args: "./result"
+      # }}
 
       - name: debug
         run: |
