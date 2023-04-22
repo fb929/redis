@@ -1,42 +1,46 @@
-on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+#on:
+#  push:
+#    # Sequence of patterns matched against refs/tags
+#    tags:
+#    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+on: push
 
 name: release
 
 jobs:
-  create_release:
-    name: create release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+#  create_release:
+#    name: create release
+#    runs-on: ubuntu-latest
+#    outputs:
+#      upload_url: ${{ steps.create_release.outputs.upload_url }}
+#    steps:
+#      - name: create release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: Release ${{ github.ref }}
+#          draft: false
+#          prerelease: false
   build:
     name: build release
     runs-on: ubuntu-latest
-    needs: create_release
+#    needs: create_release
     steps:
       - uses: actions/checkout@v3
       - name: get release version
         id: release-version
         run: |
-          echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
+          #echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
+          echo "v7.0.9" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
       - name: download archive
         run: |
           wget http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
           tar -zxvf redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
+      - name: run make
+        run: make
 
 #      # create asset {{
 #      - name: create package deb
