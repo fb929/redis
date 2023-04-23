@@ -8,27 +8,27 @@ on: push
 name: release
 
 jobs:
-  create_release:
-    name: create release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-      - name: create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+#  create_release:
+#    name: create release
+#    runs-on: ubuntu-latest
+#    outputs:
+#      upload_url: ${{ steps.create_release.outputs.upload_url }}
+#    steps:
+#      - name: create release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: Release ${{ github.ref }}
+#          draft: false
+#          prerelease: false
   build:
     name: build release
     runs-on: ubuntu-latest
     container: amazonlinux:2
-    needs: create_release
+#    needs: create_release
     strategy:
       matrix:
         arch:
@@ -43,7 +43,7 @@ jobs:
           #  rpm_arch: aarch64
     steps:
       - name: installing require packages
-        run: yum install -y wget make gcc
+        run: yum install -y wget make gcc tar
       - name: get release version
         id: release-version
         run: |
