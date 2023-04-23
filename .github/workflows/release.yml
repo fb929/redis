@@ -45,7 +45,6 @@ jobs:
         id: release-version
         run: |
           echo "$GITHUB_REF_NAME" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
-          #echo "v7.0.9" | sed 's|^[a-zA-Z]\+|RELEASE_VERSION=|' >> $GITHUB_OUTPUT
       - name: download archive
         run: |
           wget http://download.redis.io/releases/redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
