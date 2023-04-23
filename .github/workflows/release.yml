@@ -51,7 +51,7 @@ jobs:
           tar -zxvf redis-${{ steps.release-version.outputs.RELEASE_VERSION }}.tar.gz
       - name: run make
         run: |
-          INSTALL_PREFIX_DIR=$(pwd)/result
+          INSTALL_PREFIX_DIR=$(pwd)/result/usr
           cd redis-${{ steps.release-version.outputs.RELEASE_VERSION }} && make && make PREFIX=$INSTALL_PREFIX_DIR install
           find $INSTALL_PREFIX_DIR
 
