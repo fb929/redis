@@ -26,6 +26,7 @@ jobs:
   build:
     name: build release
     runs-on: ubuntu-latest
+    container: amazonlinux:2
     needs: create_release
     strategy:
       matrix:
