@@ -42,9 +42,9 @@ jobs:
           #- arch: arm64
           #  rpm_arch: aarch64
     steps:
-      - name get os_release id
+      - name: get os_release id
         id: os_release_id
-        run:
+        run: |
           OS_RELEASE_ID=$(cat /etc/os-release | grep '^ID=')
           if [[ -z $OS_RELEASE_ID ]]; then
             OS_RELEASE_ID=linux
