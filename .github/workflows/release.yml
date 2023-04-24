@@ -46,11 +46,11 @@ jobs:
         id: os_release_id
         run: |
           cat /etc/os-release
-          OS_RELEASE_ID=$(cat /etc/os-release | grep '^ID=')
+          OS_RELEASE_ID=$(cat /etc/os-release | grep '^ID=' | sed 's|^ID=||' | tr -d '"' | tr -d "'" )
           if [[ -z $OS_RELEASE_ID ]]; then
             OS_RELEASE_ID=linux
           fi
-          echo $OS_RELEASE_ID
+          echo OS_RELEASE_ID=$OS_RELEASE_ID
           echo "$OS_RELEASE_ID" >> $GITHUB_OUTPUT
       - name: installing require packages
         if: ${{ steps.os_release_id.outputs.OS_RELEASE_ID == 'amzn' }}
