@@ -43,7 +43,7 @@ jobs:
           #  rpm_arch: aarch64
     steps:
       - name: installing require packages
-        run: yum install -y wget make gcc tar
+        run: yum install -y wget make gcc tar gzip
       - name: get release version
         id: release-version
         run: |
