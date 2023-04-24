@@ -45,10 +45,12 @@ jobs:
       - name: get os_release id
         id: os_release_id
         run: |
+          cat /etc/os-release
           OS_RELEASE_ID=$(cat /etc/os-release | grep '^ID=')
           if [[ -z $OS_RELEASE_ID ]]; then
             OS_RELEASE_ID=linux
           fi
+          echo $OS_RELEASE_ID
           echo "$OS_RELEASE_ID" >> $GITHUB_OUTPUT
       - name: installing require packages
         if: ${{ steps.os_release_id.outputs.OS_RELEASE_ID == 'amzn' }}
