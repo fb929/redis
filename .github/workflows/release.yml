@@ -42,7 +42,16 @@ jobs:
           #- arch: arm64
           #  rpm_arch: aarch64
     steps:
+      - name get os_release id
+        id: os_release_id
+        run:
+          OS_RELEASE_ID=$(cat /etc/os-release | grep '^ID=')
+          if [[ -z $OS_RELEASE_ID ]]; then
+            OS_RELEASE_ID=linux
+          fi
+          echo "$OS_RELEASE_ID" >> $GITHUB_OUTPUT
       - name: installing require packages
+        if: ${{ steps.os_release_id.outputs.OS_RELEASE_ID == 'amzn' }}
         run: yum install -y wget make gcc tar gzip
       - name: get release version
         id: release-version
@@ -63,12 +72,12 @@ jobs:
       - name: create package deb
         uses: bpicode/github-action-fpm@master
         with:
-          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type deb --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir --chdir ./result"
+          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type deb --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir --chdir ./result --package-name-suffix ${{ steps.os_release_id.outputs.OS_RELEASE_ID }}"
           fpm_args: "./"
       - name: create package rpm
         uses: bpicode/github-action-fpm@master
         with:
-          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type rpm --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.rpm_arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir --chdir ./result"
+          fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type rpm --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.rpm_arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir --chdir ./result --package-name-suffix ${{ steps.os_release_id.outputs.OS_RELEASE_ID }}"
           fpm_args: "./"
       # }}
 
