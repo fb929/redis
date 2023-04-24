@@ -72,7 +72,7 @@ jobs:
 
       # create asset {{
       - name: create package deb
-        uses: bpicode/github-action-fpm@master
+        uses: fb929/github-action-fpm@master
         with:
           fpm_opts: "--debug --name ${{ github.event.repository.name }} --output-type deb --version ${{ steps.release-version.outputs.RELEASE_VERSION }} --architecture ${{ matrix.arch }} --exclude '*/.gitignore' --exclude '*/.git' --input-type dir --chdir ./result --deb-dist ${{ steps.os_release_id.outputs.OS_RELEASE_ID }}"
           fpm_args: "./"
