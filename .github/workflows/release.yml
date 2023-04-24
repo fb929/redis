@@ -51,7 +51,7 @@ jobs:
             OS_RELEASE_ID=linux
           fi
           echo OS_RELEASE_ID=$OS_RELEASE_ID
-          echo "$OS_RELEASE_ID" >> $GITHUB_OUTPUT
+          echo "OS_RELEASE_ID=$OS_RELEASE_ID" >> $GITHUB_OUTPUT
       - name: installing require packages
         if: ${{ steps.os_release_id.outputs.OS_RELEASE_ID == 'amzn' }}
         run: yum install -y wget make gcc tar gzip
