@@ -139,8 +139,7 @@ jobs:
             --verbose \
             --exclude='.gitignore' \
             --file=${{ steps.release_info.outputs.TGZ_ASSET_NAME }} \
-            --directory=./usr/ \
-            .
+            ./usr/
       - name: create package ${{ steps.release_info.outputs.PACKAGE_TYPE }}
         if: matrix.os == 'linux'
         uses: bpicode/github-action-fpm@master
