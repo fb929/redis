@@ -42,7 +42,7 @@ jobs:
           - linux
         image_name:
           - amazonlinux:2
-          - ubuntu
+          - ubuntu:22.04
         include:
           - arch: amd64
             rpm_arch: x86_64
@@ -71,15 +71,15 @@ jobs:
         id: release_info
         run: |
           case ${{ matrix.image_name }} in
-            amazonlinux*)
-              OS_RELEASE_ID="amzn"
+            amazonlinux:2)
+              OS_RELEASE_ID="amzn2"
               FPM_OPTS="--rpm-dist $OS_RELEASE_ID"
               FPM_ASSET_NAME="${{ github.event.repository.name }}-${{ steps.release-version.outputs.RELEASE_VERSION }}-1.${OS_RELEASE_ID}.${{ matrix.rpm_arch }}.rpm"
               PACKAGE_TYPE=rpm
               INSTALL_REQUIRED_PACKAGES_CMD="yum install -y wget make gcc tar gzip which pkgconfig"
             ;;
-            ubuntu*)
-              OS_RELEASE_ID="ubuntu"
+            ubuntu:22.04)
+              OS_RELEASE_ID="ubuntu:22"
               FPM_OPTS="--deb-dist $OS_RELEASE_ID --iteration $OS_RELEASE_ID"
               FPM_ASSET_NAME="${{ github.event.repository.name }}_${{ steps.release-version.outputs.RELEASE_VERSION }}-${OS_RELEASE_ID}_${{ matrix.arch }}.deb"
               PACKAGE_TYPE=deb
@@ -181,7 +181,7 @@ jobs:
           asset_name: ${{ steps.release_info.outputs.TGZ_ASSET_NAME }}
           asset_content_type: application/gzip
 
-      - name: upload-release-asset deb
+      - name: upload-release-asset ${{ steps.release_info.outputs.PACKAGE_TYPE }}
         if: matrix.os == 'linux'
         uses: actions/upload-release-asset@v1
         env:
