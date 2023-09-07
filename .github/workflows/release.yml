@@ -74,14 +74,16 @@ jobs:
             amazonlinux:2)
               OS_RELEASE_ID="amzn2"
               FPM_OPTS="--rpm-dist $OS_RELEASE_ID"
-              FPM_ASSET_NAME="${{ github.event.repository.name }}-${{ steps.release-version.outputs.RELEASE_VERSION }}-1.${OS_RELEASE_ID}.${{ matrix.rpm_arch }}.rpm"
+              FPM_ARCHITECTURE="${{ matrix.rpm_arch }}"
+              FPM_ASSET_NAME="${{ github.event.repository.name }}-${{ steps.release-version.outputs.RELEASE_VERSION }}-1.${OS_RELEASE_ID}.${FPM_ARCHITECTURE}.rpm"
               PACKAGE_TYPE=rpm
               INSTALL_REQUIRED_PACKAGES_CMD="yum install -y wget make gcc tar gzip which pkgconfig"
             ;;
             ubuntu:22.04)
               OS_RELEASE_ID="ubuntu:22"
               FPM_OPTS="--deb-dist $OS_RELEASE_ID --iteration $OS_RELEASE_ID"
-              FPM_ASSET_NAME="${{ github.event.repository.name }}_${{ steps.release-version.outputs.RELEASE_VERSION }}-${OS_RELEASE_ID}_${{ matrix.arch }}.deb"
+              FPM_ARCHITECTURE="${{ matrix.arch }}"
+              FPM_ASSET_NAME="${{ github.event.repository.name }}_${{ steps.release-version.outputs.RELEASE_VERSION }}-${OS_RELEASE_ID}_${FPM_ARCHITECTURE}.deb"
               PACKAGE_TYPE=deb
               INSTALL_REQUIRED_PACKAGES_CMD="apt-get update && apt install -y wget make gcc tar gzip debianutils pkg-config"
             ;;
@@ -93,6 +95,7 @@ jobs:
           TGZ_ASSET_NAME="${{ github.event.repository.name }}-${{ steps.release-version.outputs.RELEASE_VERSION }}.${{ matrix.os }}-${OS_RELEASE_ID}-${{ matrix.arch }}.tgz"
           echo "OS_RELEASE_ID=$OS_RELEASE_ID" >> $GITHUB_OUTPUT
           echo "FPM_OPTS=$FPM_OPTS" >> $GITHUB_OUTPUT
+          echo "FPM_ARCHITECTURE=$FPM_ARCHITECTURE" >> $GITHUB_OUTPUT
           echo "FPM_ASSET_NAME=$FPM_ASSET_NAME" >> $GITHUB_OUTPUT
           echo "PACKAGE_TYPE=$PACKAGE_TYPE" >> $GITHUB_OUTPUT
           echo "INSTALL_REQUIRED_PACKAGES_CMD=$INSTALL_REQUIRED_PACKAGES_CMD" >> $GITHUB_OUTPUT
@@ -112,6 +115,7 @@ jobs:
             echo PREFIX=/workspace/usr
             echo OS_RELEASE_ID=${{ steps.release_info.outputs.OS_RELEASE_ID }}
             echo FPM_OPTS=${{ steps.release_info.outputs.FPM_OPTS }}
+            echo FPM_ARCHITECTURE=${{ steps.release_info.outputs.FPM_ARCHITECTURE }}
             echo FPM_ASSET_NAME=${{ steps.release_info.outputs.FPM_ASSET_NAME }}
             echo PACKAGE_MANAGE=${{ steps.release_info.outputs.PACKAGE_TYPE }}
             echo TGZ_ASSET_NAME=${{ steps.release_info.outputs.TGZ_ASSET_NAME }}
@@ -144,7 +148,7 @@ jobs:
           fpm_opts:
             --name ${{ github.event.repository.name }}
             --version ${{ steps.release-version.outputs.RELEASE_VERSION }}
-            --architecture ${{ matrix.rpm_arch }}
+            --architecture ${{ steps.release_info.outputs.FPM_ARCHITECTURE }}
             --exclude '*/.gitignore'
             --exclude '*/.git'
             --input-type dir
