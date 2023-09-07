@@ -80,7 +80,7 @@ jobs:
               INSTALL_REQUIRED_PACKAGES_CMD="yum install -y wget make gcc tar gzip which pkgconfig"
             ;;
             ubuntu:22.04)
-              OS_RELEASE_ID="ubuntu:22"
+              OS_RELEASE_ID="ubuntu22"
               FPM_OPTS="--deb-dist $OS_RELEASE_ID --iteration $OS_RELEASE_ID"
               FPM_ARCHITECTURE="${{ matrix.arch }}"
               FPM_ASSET_NAME="${{ github.event.repository.name }}_${{ steps.release-version.outputs.RELEASE_VERSION }}-${OS_RELEASE_ID}_${FPM_ARCHITECTURE}.deb"
