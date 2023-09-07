@@ -144,7 +144,7 @@ jobs:
           fpm_opts:
             --name ${{ github.event.repository.name }}
             --version ${{ steps.release-version.outputs.RELEASE_VERSION }}
-            --architecture ${{ matrix.arch }}
+            --architecture ${{ matrix.rpm_arch }}
             --exclude '*/.gitignore'
             --exclude '*/.git'
             --input-type dir
