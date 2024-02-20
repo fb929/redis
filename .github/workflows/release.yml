@@ -159,9 +159,9 @@ jobs:
             --version ${{ steps.release-version.outputs.RELEASE_VERSION }}
             --architecture ${{ steps.release_info.outputs.FPM_ARCHITECTURE }}
             --maintainer ${{ github.repository_owner }}
-            --description "${{ steps.get-repo-info.outputs.DESCRIPTION }}"
+            --description "open-source in-memory storage"
             --license "${{ steps.get-repo-info.outputs.LICENSE }}"
-            --url ${{ github.repositoryUrl }}
+            --url https://github.com/${{ github.repository }}
             --vendor ${{ github.repository_owner }}
             --exclude '*/.gitignore'
             --exclude '*/.git'
