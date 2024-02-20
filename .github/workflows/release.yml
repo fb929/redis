@@ -140,20 +140,36 @@ jobs:
             --exclude='.gitignore' \
             --file=${{ steps.release_info.outputs.TGZ_ASSET_NAME }} \
             ./usr/
+      # fpm {{{
+      - name: 'Setup jq'
+        uses: dcarbone/install-jq-action@v2
+      - name: get repository description
+        id: get-repo-info
+        run: |
+          DESCRIPTION=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" ${{ github.api_url }}/repos/${{ github.repository }} | jq -r .description)
+          echo "DESCRIPTION=$DESCRIPTION" >> $GITHUB_OUTPUT
+          LICENSE=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" ${{ github.api_url }}/repos/${{ github.repository }}/license | jq -r .license.spdx_id)
+          echo "LICENSE=$LICENSE" >> $GITHUB_OUTPUT
       - name: create package ${{ steps.release_info.outputs.PACKAGE_TYPE }}
         if: matrix.os == 'linux'
-        uses: bpicode/github-action-fpm@master
+        uses: fb929/github-action-fpm@master
         with:
           fpm_opts:
             --name ${{ github.event.repository.name }}
             --version ${{ steps.release-version.outputs.RELEASE_VERSION }}
             --architecture ${{ steps.release_info.outputs.FPM_ARCHITECTURE }}
+            --maintainer ${{ github.repository_owner }}
+            --description "${{ steps.get-repo-info.outputs.DESCRIPTION }}"
+            --license "${{ steps.get-repo-info.outputs.LICENSE }}"
+            --url ${{ github.repositoryUrl }}
+            --vendor ${{ github.repository_owner }}
             --exclude '*/.gitignore'
             --exclude '*/.git'
             --input-type dir
             --output-type ${{ steps.release_info.outputs.PACKAGE_TYPE }}
             ${{ steps.release_info.outputs.FPM_OPTS }}
           fpm_args: ./usr/
+      # }}}
       # }}
 
       - name: debug
